@@ -2,9 +2,9 @@
 
 ![holoscan-my-NVIDIA-module_skills](holoscan-my-NVIDIA-module_skills.jpg)
 
-# Module Identity (`metadata.json`)
-Updated `metadata.json` in my repository root to match my official module identity:
-
+# Module Identity 
+(`metadata.json`) in my repository root to match my official module identity:
+```JSON
 {
   "module": {
     "name": "holoscan-my-NVIDIA-module",
@@ -27,11 +27,12 @@ Updated `metadata.json` in my repository root to match my official module identi
     }
   }
 }
-
-# Sensor Fusion Operator Header `(operators/fusion_op/fusion_op.hpp)`
+```
+# Sensor Fusion Operator Header 
+(`operators/fusion_op/fusion_op.hpp`)
 
 This operator implements the multi-rate contract between the 60 Hz Camera source and high-rate IMU source: 
-
+```
 #pragma once
 
 #include <cstdint>
@@ -57,9 +58,10 @@ class FusionOp final : public holoscan::Operator<> {
 };
 
 }  // namespace holoscan::my_nvidia_module 
-
-# Sensor Fusion Operator Source `(operators/fusion_op/fusion_op.cpp)`
-
+```
+# Sensor Fusion Operator Source 
+(`operators/fusion_op/fusion_op.cpp`)
+```
 #include "fusion_op/fusion_op.hpp"
 #include <holoscan/core/expected_macros.hpp>
 
@@ -84,9 +86,10 @@ holoscan::expected<void, holoscan::Error> FusionOp::compute(
 }
 
 }  // namespace holoscan::my_nvidia_module 
-
-# C++ Pipeline Application `(applications/first_pipeline/cpp/main.cpp)`
-
+```
+# C++ Pipeline Application 
+(`applications/first_pipeline/cpp/main.cpp`)
+```
 #include <iostream>
 #include <holoscan/core/compile.hpp>
 #include <holoscan/core/graph.hpp>
@@ -114,6 +117,6 @@ int main() {
   // Execute the sensor-fusion pipeline
   return holoscan::run(plan);
 } 
-
+```
 ---
 Copyright © 2026 Md Abul Hossain. All Rights Reserved.
