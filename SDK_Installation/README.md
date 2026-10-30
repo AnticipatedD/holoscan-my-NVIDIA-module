@@ -1,0 +1,269 @@
+> This page is for version 5.0 (Latest) (default).
+> For other versions, use one of these documentation indexes:
+> - 5.0 (Latest) (default): [Latest Release](https://docs.nvidia.com/holoscan/sdk-user-guide/5-0-latest/llms.txt)
+> - ltsb-2.0: [SDK-USER-GUIDE](https://docs.nvidia.com/holoscan/sdk-user-guide/ltsb-2-0/llms.txt)
+> - 4.6: [User-Guide](https://docs.nvidia.com/holoscan/sdk-user-guide/4-6/llms.txt)
+> - 4.5: [User-Guide](https://docs.nvidia.com/holoscan/sdk-user-guide/4-5/llms.txt)
+> - 4.4: [User-Guide](https://docs.nvidia.com/holoscan/sdk-user-guide/4-4/llms.txt)
+> - 4.3: [User-Guide](https://docs.nvidia.com/holoscan/sdk-user-guide/4-3/llms.txt)
+> - Archives: [User-Guide-Archives](https://docs.nvidia.com/holoscan/sdk-user-guide/archives/llms.txt)
+
+> For clean Markdown of any page, append .md to the page URL.
+> For a complete documentation index, see [User-Guide](https://docs.nvidia.com/holoscan/sdk-user-guide/llms.txt).
+> For AI client integration (Claude Code, Cursor, etc.), connect to the MCP server at [NVIDIA MCP](https://docs.nvidia.com/holoscan/sdk-user-guide/_mcp/server).
+
+This guide covers installing Holoscan SDK **development** artifacts for NVIDIA Developer Kits (arm64) and x86_64 Linux platforms.
+
+> **Tip**
+>
+> For Yocto recipes and demo images, see [Yocto on Jetson](/holoscan/sdk-user-guide/yocto).
+
+## Prerequisites
+
+Before you choose an installation method, check that your system meets the
+Holoscan SDK 5.0 requirements:
+
+* **Operating system:** The packaged options use Ubuntu 24.04. You can run the
+  development container on another Linux host supported by the
+  [NVIDIA Container Toolkit](https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/supported-platforms.html).
+  "Bare metal" host support is limited to the listed Ubuntu version.
+* **Host Architectures:** The SDK supports x86_64 and arm64. On arm64, the Debian
+  packages (architecture `sbsa`) and the container cover both arm64 servers
+  with discrete GPUs and NVIDIA Jetson and IGX systems running JetPack 7 or
+  IGX OS 2 and later.
+* **GPU Architectures:** Ampere or newer. See a complete list of tested platforms below.
+* **GPU mode:** Holoscan SDK 5.0 uses a single CUDA 13 software stack for
+  discrete and integrated GPUs. JetPack 6 and earlier are not supported; there is no separate iGPU container or
+  package.
+* **CUDA:** Holoscan SDK 5.0 requires CUDA 13. Use an NVIDIA driver compatible with CUDA 13
+  (R580 or newer) on the host machine. Container users also need Docker and the NVIDIA Container Toolkit.
+* **Python:** Use Python 3.12 or newer. Holoscan SDK wheels use the CPython 3.12
+  stable ABI and are intended for Python 3.12, 3.13, and 3.14.
+* **CMake:** Building C++ applications against an installed SDK requires
+  CMake 4.0 or newer. Ubuntu 24.04 ships CMake 3.28, so install a newer
+  version with `sudo snap install cmake --classic`, `pipx install cmake`,
+  or the [Kitware APT repository](https://apt.kitware.com/). The development
+  container already includes it.
+
+Bare-metal package and wheel users must additionally provide the runtime dependencies
+identified by their selected components.
+
+### Tested platforms
+
+Holoscan SDK 5.0 is tested on the following platforms:
+
+| Platform                                                    | OS                        | GPU                  |
+| ----------------------------------------------------------- | ------------------------- | -------------------- |
+| x86_64 workstation (RTX 6000 Ada or RTX PRO 6000 Blackwell) | Ubuntu 24.04, R610 driver | dGPU                 |
+| NVIDIA Jetson AGX Thor                                      | JetPack 7.2.1             | iGPU                 |
+| NVIDIA Jetson AGX Orin, Jetson Orin Nano                    | JetPack 7.2.1             | iGPU                 |
+| NVIDIA IGX Thor 5000                                        | IGX OS 2.0                | iGPU                 |
+| NVIDIA IGX Thor 7000                                        | IGX OS 2.0                | iGPU, or iGPU + dGPU |
+| NVIDIA DGX Spark                                            | DGX OS 7.6.0              | iGPU                 |
+| NVIDIA Grace Hopper (GH200)                                 | Ubuntu 24.04, R610 driver | dGPU                 |
+| NVIDIA Grace Blackwell (GB200)                              | Ubuntu 24.04, R610 driver | dGPU                 |
+
+IGX Orin (IGX OS 1.x) and JetPack 6 are not supported.
+
+For hardware-specific configuration, see
+[Additional Setup](/holoscan/sdk-user-guide/setup/additional-setup) and
+[Third-Party Hardware Setup](/holoscan/sdk-user-guide/setup/third-party-hardware).
+For RDMA, see
+[Enabling RDMA](/holoscan/sdk-user-guide/setup/additional-setup/gpudirect-rdma).
+
+## Install the SDK
+
+There are multiple ways to install and develop with the Holoscan SDK:
+
+### Installation methods
+
+#### NGC Container
+
+```bash
+docker pull nvcr.io/nvidia/clara-holoscan/holoscan:v5.0.0-cuda13
+```
+
+The container includes:
+
+* Holoscan Core, Vision, Visualization, and Inference for C++ and Python;
+* C++ headers, CMake package files, and application-development tools under `/usr`;
+* Python 3.12, typing information, and the registered module providers;
+* installed examples and the RacerX sample dataset;
+* Holoscan SDK debug symbols; and
+* the runtime, debugging, profiling, graphics, and networking dependencies
+  required by the supported installed-SDK workflows.
+
+Choose the development container when you want a ready-to-use C++ and Python
+environment without installing each dependency yourself. It contains a
+pre-installed SDK for application development; it is not the build container
+used to compile the SDK itself. See the [NGC catalog][container] to learn more.
+
+#### Debian package
+
+If you prefer native C++ development, install the full Holoscan SDK with the `holoscan` Debian package,
+which will install the core libraries, inference, vision, and visualization
+development and runtime packages. Or, individually install only the components you need.
+
+> **Debian repository setup required**
+>
+> If the `holoscan` package is not already available from APT on your system,
+> visit the [Holoscan Downloads](https://developer.nvidia.com/holoscan-downloads) page
+> and use the network installer or local installer commands to configure
+> the NVIDIA CUDA APT repository source.
+
+After configuring the repository, refresh its package list:
+
+```bash
+sudo apt update
+```
+
+For the full C++ SDK:
+
+```bash
+sudo apt install holoscan
+```
+
+For a Core-only C++ environment:
+
+```bash
+sudo apt install holoscan-core
+```
+
+Add only the optional modules your application needs:
+
+```bash
+sudo apt install holoscan-vision
+sudo apt install holoscan-visualization
+sudo apt install holoscan-inference
+```
+
+Each module must match the installed Core version. The packages install into
+`/usr`, using the Debian library directory for your architecture
+(`<triplet>` is `x86_64-linux-gnu` or `aarch64-linux-gnu`):
+
+| Content                     | Location                               |
+| --------------------------- | -------------------------------------- |
+| Headers                     | `/usr/include/holoscan`                |
+| Shared libraries            | `/usr/lib/<triplet>`                   |
+| CMake package configuration | `/usr/lib/<triplet>/cmake/holoscan`    |
+| C++ examples                | `/usr/lib/<triplet>/holoscan/examples` |
+
+`/usr` follows the Linux filesystem conventions, so compilers, the dynamic
+linker, and CMake find the SDK without extra configuration;
+`find_package(holoscan)` needs no hints. Python bindings are not included;
+use the [Python wheel](#python-wheel) for a packaged Python environment.
+
+> **Note**
+>
+> Each package declares its own runtime or development dependencies.
+> `holoscan-vision` bundles the CV-CUDA runtime libraries it needs under `/usr/lib/<triplet>/holoscan/cvcuda`, so you don't need to install CV-CUDA separately.
+> If your application uses CV-CUDA directly, install CV-CUDA's own packages from its [GitHub release assets](https://github.com/CVCUDA/CV-CUDA/releases).
+> You remain responsible for dependencies that are specific to your application.
+
+#### Python wheel
+
+If you prefer to develop applications in Python, install the full Holoscan SDK with the
+`holoscan` Python package, which will install core libraries, inference, vision, and visualization
+packages. Or, individually install only the components you need.
+
+Use an isolated Python environment to install the full Holoscan SDK Python support:
+
+```bash
+python3 -m pip install holoscan
+```
+
+Alternatively, install only the components your application needs, using the
+same SDK version for each:
+
+```bash
+python3 -m pip install holoscan-core-cu13==5.0.0
+python3 -m pip install holoscan-vision-cu13==5.0.0
+python3 -m pip install holoscan-visualization-cu13==5.0.0
+python3 -m pip install holoscan-inference-cu13==5.0.0
+```
+
+The wheels use an Ubuntu 24.04/glibc 2.39 baseline. The host provides the
+NVIDIA driver and CUDA 13 runtime. The Vision wheel resolves CV-CUDA and NPP
+through their Python distributions. The Inference
+runtime expects the application environment to provide TensorRT 10. See
+[Python installation](/holoscan/sdk-user-guide/python/installation) for the
+5.0 Python surface and the build-tree workflow.
+
+Visit [PyPI][pypi] for more information. See each package's PyPI page for
+additional details such as other host environment requirements.
+
+#### Build from source
+
+Holoscan SDK is open source. For cases not already covered by pre-built binary
+distributions, we invite developers to build the SDK directly.
+
+Visit [GitHub][source] to obtain the Holoscan SDK source code.
+From the project root folder, run:
+
+```bash
+./run build
+```
+
+This command uses the repository's build container to provide a consistent
+Ubuntu 24.04, CUDA 13, and toolchain versions. By default, it builds the C++
+SDK, Python bindings, all three optional modules, tests, and examples.
+To enter the build container environment afterward, run:
+
+```bash
+./run launch
+```
+
+Run `./run build --help` to choose an architecture, build type, install
+prefix, or set of optional components. See the [source repository][source]
+for the complete developer workflow.
+
+You can also build against dependencies installed directly on the host, but
+that path is intended for advanced users and is not regularly tested. We
+recommend `./run build` for a consistent environment.
+
+[container]: https://catalog.ngc.nvidia.com/orgs/nvidia/teams/clara-holoscan/containers/holoscan
+
+[pypi]: https://pypi.org/project/holoscan
+
+[source]: https://github.com/nvidia-holoscan/holoscan-sdk
+
+### Not sure what to choose?
+
+If you want everything ready to go, choose the [**NGC development container**][container] as the
+safest way to ensure core dependencies are present with the expected versions. It is the simplest way to run the installed examples
+and get started with developing your own C++ and Python Holoscan applications. The benefit does come at a cost:
+
+* large image size due to the numerous dependencies. If you need a lean runtime image, use one of the alternate installation methods.
+* standard inconveniences that exist when using Docker, such as more complex run instructions for proper configuration.
+
+If you are confident in your ability to manage dependencies on your own in your host environment,
+the **Holoscan SDK Debian packages** provide all the capabilities needed to use the Holoscan SDK.
+
+If you just want to create new applications with the pre-built Inference, Vision, and Visualization operators,
+use the [**Holoscan SDK Python wheels**][pypi]. Note that these may require extra work to set up
+your host environment with runtime dependencies not available via PyPI today.
+
+For other development cases such as custom `Debug` builds, targeting an unsupported platform, or experimenting with
+different configuration options or source patches, please start from the Holoscan SDK open source code.
+
+| Capability            | Development container                       | Debian packages                             | Python wheels                                    | Source checkout                                     |
+| --------------------- | ------------------------------------------- | ------------------------------------------- | ------------------------------------------------ | --------------------------------------------------- |
+| Target architecture   | x86_64 and arm64                            | x86_64 and arm64                            | x86_64 and arm64                                 | x86_64 and arm64                                    |
+| Target OS             | Ubuntu 24.04                                | Ubuntu 24.04                                | Ubuntu 24.04                                     | Ubuntu 24.04                                        |
+| CUDA baseline         | CUDA 13                                     | CUDA 13                                     | CUDA 13                                          | CUDA 13                                             |
+| C++ development       | Headers, libraries, and CMake configuration | Headers, libraries, and CMake configuration | Not included                                     | Built by default                                    |
+| Python                | Python 3.12                                 | Not included                                | Python 3.12–3.14                                 | Python 3.12–3.14                                    |
+| Domain Components     | All, not configurable                       | Available, configurable                     | Available, configurable                          | Available, configurable                             |
+| Examples              | Installed                                   | Compatible with the source repository       | Compatible with the source repository            | Included and built by default                       |
+| Sample data           | RacerX data included                        | Retrieve separately                         | Retrieve separately                              | Downloaded when requested by the build or example   |
+| Dependencies          | Development and runtime stack included      | Enumerated for `apt` installation           | Enumerated for `pip` installation when available | Supplied by the build container                     |
+| Installation location | Container `/usr`                            | Host `/usr`                                 | Python environment                               | Architecture-specific build and install directories |
+
+Camera/V4L2 is outside the initial development-container support contract.
+Install ConnectX kernel drivers and other host hardware support separately,
+and validate them on your target system.
+
+> **Attention**
+>
+> For feature requests and bug reports, please use the
+> [Holoscan forum](https://forums.developer.nvidia.com/c/robotics-edge-computing/holoscan/757).
