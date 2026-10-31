@@ -1,7 +1,36 @@
 # holoscan-my-NVIDIA-module 
 
+# NVIDIA-Nemotron-3.5-Transcribe-30B-A4B
+
+<div align="center" style="line-height: 1;">
+  <a href="https://developer.nvidia.com/nemotron" target="_blank" style="margin: 2px;">
+    <img alt="Homepage" src="https://img.shields.io/badge/🏠Nemotron Developer Page-Learn More Here!-536af5?color=76B900&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
+  </a>
+  <a href="https://github.com/NVIDIA-NeMo/Speech" target="_blank" style="margin: 2px;">
+    <img alt="NeMo Speech" src="https://img.shields.io/badge/🛠️NeMo Speech-Fine--Tune and Serve-536af5?color=76B900&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
+  </a>
+  <a href="https://research.nvidia.com/labs/nemotron/files/NVIDIA-Nemotron-3.5-Transcribe-Technical-Report.pdf" target="_blank" style="margin: 2px;">
+    <img alt="Tech Report" src="https://img.shields.io/badge/📝Tech Report-Read Now!-536af5?color=76B900&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
+  </a>
+  <a href="https://huggingface.co/spaces/nvidia/nemotron-transcribe" target="_blank" style="margin: 2px;">
+    <img alt="Try It" src="https://img.shields.io/badge/🚀Try It-Live Demo-536af5?color=76B900&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
+  </a>
+  <a href="https://sgl-project.github.io/sglang-omni/cookbook/nemotron_transcribe.html" target="_blank" style="margin: 2px;">
+    <img alt="SGLang-Omni" src="https://img.shields.io/badge/⚡SGLang--Omni-Serve-536af5?color=76B900&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
+  </a>
+  <a href="https://huggingface.co/datasets/nvidia/Granary-v2" target="_blank" style="margin: 2px;">
+    <img alt="Granary-v2 Dataset" src="https://img.shields.io/badge/🤗Granary--v2-Dataset-536af5?color=76B900&logoColor=white" style="display: inline-block; vertical-align: middle;"/>
+  </a>
+  <a href="https://discord.gg/9xpKQtVvrk" target="_blank" style="margin: 2px;">
+    <img alt="Discord" src="https://img.shields.io/badge/Discord-NVIDIA%20AI%20Developer-7289da?logo=discord&logoColor=white&color=7289da" style="display: inline-block; vertical-align: middle;"/>
+  </a>
+</div> 
+
+---
+
 ![holoscan-my-NVIDIA-module_skills](holoscan-my-NVIDIA-module_skills.jpg)
 
+---
 # Module Identity 
 (`metadata.json`) in my repository root to match my official module identity:
 ```JSON
